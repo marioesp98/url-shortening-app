@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: url-shortening-app-deployment
+  namespace: my-app
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: url-shortening-app
+  template:
+    metadata:
+      namespace: my-app
+      labels:
+        app: url-shortening-app
+    spec:
+      containers:
+      - name: url-shortening-app-container
+        image: benhid/url_shortening_app:1.0.2
+        ports:
+        - containerPort: 8090
+        envFrom:
+          - secretRef:
+              name: url-shortening-app-env
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8090
+          initialDelaySeconds: 5
